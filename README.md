@@ -1,2 +1,2 @@
-## FOMO Bot
+## FOMO Bot (WIP)
 Checks fomo on crypto
