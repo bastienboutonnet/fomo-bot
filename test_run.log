@@ -1,0 +1,79 @@
+INFO:root:Getting assets list
+INFO:root:Loading coinmarket asset list
+INFO:root:Looking for asset URLs
+INFO:root:Making URL list
+INFO:root:Extracting asset names from URL
+INFO:root:Iterating Over Coins
+INFO:root:Getting assets list
+INFO:root:Loading coinmarket asset list
+INFO:root:Looking for asset URLs
+INFO:root:Making URL list
+INFO:root:Extracting asset names from URL
+INFO:root:Iterating Over Coins
+INFO:root:Getting markets for: BITCOIN
+INFO:root:Getting assets list
+INFO:root:Loading coinmarket asset list
+INFO:root:Looking for asset URLs
+INFO:root:Making URL list
+INFO:root:Extracting asset names from URL
+INFO:root:Getting markets for: BITCOIN
+INFO:root:Getting markets for: BITCOIN
+INFO:root:hey
+INFO:root:Looking for Reddit link for: BITCOIN
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:link found
+INFO:root:['https://www.reddit.com/r/bitcoin']
+INFO:root:subscribers found
+INFO:root:subscribers found
+INFO:root:subscribers found

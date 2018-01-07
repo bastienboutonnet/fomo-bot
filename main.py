@@ -12,7 +12,7 @@ from parameters import ALLOWED_EXCHANGES
 
 
 
-logging.basicConfig(filename='test_run.log',level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 def load_and_append_data(new_data, filename, output=False):
     if os.path.isfile('./data/'+filename+'.json'):
@@ -28,8 +28,8 @@ def load_and_append_data(new_data, filename, output=False):
                          orient='records')
 @click.command()
 @click.option('--restrict_markets/--no-restrict_markets', default=False)
-@click.argument('subset', type=int)
-def main(restrict_markets, subset):
+@click.argument('limit', type=int)
+def main(restrict_markets, limit):
     logging.info('Getting assets list')
     url = 'https://coinmarketcap.com/all/views/all/'
 
@@ -54,7 +54,9 @@ def main(restrict_markets, subset):
     subscriptions_data = pandas.DataFrame()
 
     logging.info('Iterating Over Coins')
-    for i, coin in coins:
+    if limit > 0:
+        coins = coins[0:limit]
+    for coin in coins:
         base_url = 'https://coinmarketcap.com/currencies/'+coin
         logging.info('Getting markets for: {}'.format(coin.upper()))
         # base_url = 'https://coinmarketcap.com/currencies/nxt/#markets'
@@ -65,7 +67,7 @@ def main(restrict_markets, subset):
         for link in soup.find_all('a', href=True):
             if '/exchanges/' in link['href']:
                 if restrict_markets:
-                    if link.split('/')[2] not in ALLOWED_EXCHANGES:
+                    if link['href'].split('/')[2] not in ALLOWED_EXCHANGES:
                         pass
                     else:
                         logging.info('Looking for Reddit link for: {}'.format(coin.upper()))
@@ -83,7 +85,7 @@ def main(restrict_markets, subset):
                                 social_url = match
 
                         logging.info('Loading reddit subscription data')
-                        req = urllib2.Request(social_url+'/about.json')
+                        req = urllib2.Request(social_url[0]+'/about.json')
                         opener = urllib2.build_opener()
                         f = opener.open(req)
                         jason = json.loads(f.read())
@@ -91,11 +93,12 @@ def main(restrict_markets, subset):
                             logging.info('subscribers found')
                             small_df = pandas.DataFrame({'asset': coin,
                                                          'report_ts': pandas.to_datetime('today'),
-                                                         'subscriptions':  jason['data']['subscribers']})
+                                                         'subscriptions':  [jason['data']['subscribers']]})
                             subscriptions_data = subscriptions_data.append(small_df)
                         else:
                             logging.info('no subscription data found')
     # save stuff
+    logging.info('saving to db')
     load_and_append_data(subscriptions_data, 'data_packet')
 
 if __name__ == '__main__':
