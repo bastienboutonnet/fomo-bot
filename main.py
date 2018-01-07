@@ -1,3 +1,4 @@
+import random
 import urllib
 import re
 import json
@@ -6,6 +7,7 @@ import pandas
 import logging
 import os
 import click
+import time
 
 from bs4 import BeautifulSoup
 from parameters import ALLOWED_EXCHANGES
@@ -57,46 +59,51 @@ def main(restrict_markets, limit):
     if limit > 0:
         coins = coins[0:limit]
     for coin in coins:
+        wait = random.randint(4, 10)
+        logging.info('Waiting for: {}s'.format(wait))
+        time.sleep(random.randint(4, 10))
         base_url = 'https://coinmarketcap.com/currencies/'+coin
         logging.info('Getting markets for: {}'.format(coin.upper()))
         # base_url = 'https://coinmarketcap.com/currencies/nxt/#markets'
         resp = urllib2.urlopen(base_url+'#markets')
         soup = BeautifulSoup(resp, from_encoding=resp.info().getparam('charset'))
 
-
+        counter = 0
         for link in soup.find_all('a', href=True):
-            if '/exchanges/' in link['href']:
-                if restrict_markets:
-                    if link['href'].split('/')[2] not in ALLOWED_EXCHANGES:
-                        pass
-                    else:
-                        logging.info('Looking for Reddit link for: {}'.format(coin.upper()))
-                        #cur_url = 'https://coinmarketcap.com/'+'currencies/'+coin+'#social'
-                        # base_url = 'https://coinmarketcap.com/currencies/nxt/#social'
-                        resp = urllib2.urlopen(base_url+'#social')
-                        soup = BeautifulSoup(resp, from_encoding=resp.info().getparam('charset'))
-                        scripts = soup.find_all("script")
-                        for i in range(len(scripts)):
-                            cur_script = str(scripts[i].string)
-                            match = re.findall('https:\/\/www.reddit.com\/r\/\w+', cur_script)
-                            if match:
-                                logging.info('link found')
-                                logging.info(str(match))
-                                social_url = match
-
-        logging.info('Loading reddit subscription data')
-        req = urllib2.Request(social_url[0]+'/about.json')
-        opener = urllib2.build_opener()
-        f = opener.open(req)
-        jason = json.loads(f.read())
-        if jason['data']['subscribers']:
-            logging.info('subscribers found')
-            small_df = pandas.DataFrame({'asset': coin,
-                                         'report_ts': pandas.to_datetime('today'),
-                                         'subscriptions':  [jason['data']['subscribers']]})
-            subscriptions_data = subscriptions_data.append(small_df)
-        else:
-            logging.info('no subscription data found')
+            if counter == 0:
+                if '/exchanges/' in link['href']:
+                    if restrict_markets:
+                        if link['href'].split('/')[2] not in ALLOWED_EXCHANGES:
+                            pass
+                        else:
+                            logging.info('Looking for Reddit link for: {}'.format(coin.upper()))
+                            #cur_url = 'https://coinmarketcap.com/'+'currencies/'+coin+'#social'
+                            # base_url = 'https://coinmarketcap.com/currencies/nxt/#social'
+                            resp = urllib2.urlopen(base_url+'#social')
+                            soup = BeautifulSoup(resp, from_encoding=resp.info().getparam('charset'))
+                            scripts = soup.find_all("script")
+                            for i in range(len(scripts)):
+                                cur_script = str(scripts[i].string)
+                                match = re.findall('https:\/\/www.reddit.com\/r\/\w+', cur_script)
+                                if match:
+                                    logging.info('link found')
+                                    logging.info(str(match))
+                                    social_url = match
+                                    counter += 1
+        if social_url:
+            logging.info('Loading reddit subscription data')
+            req = urllib2.Request(social_url[0]+'/about.json', headers={ 'User-Agent': 'Mozilla/5.0' })
+            opener = urllib2.build_opener()
+            f = opener.open(req)
+            jason = json.loads(f.read())
+            if jason['data']['subscribers']:
+                logging.info('subscribers found')
+                small_df = pandas.DataFrame({'asset': coin,
+                                             'report_ts': pandas.to_datetime('today'),
+                                             'subscriptions':  [jason['data']['subscribers']]})
+                subscriptions_data = subscriptions_data.append(small_df)
+            else:
+                logging.info('no subscription data found')
     # save stuff
     logging.info('saving to db')
     load_and_append_data(subscriptions_data, 'data_packet')
