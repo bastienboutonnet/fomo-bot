@@ -92,7 +92,7 @@ def main(restrict_markets, limit):
                                     counter += 1
         if social_url:
             logging.info('Loading reddit subscription data')
-            req = urllib2.Request(social_url[0]+'/about.json', headers={ 'User-Agent': 'Mozilla/5.0' })
+            req = urllib2.Request(social_url[0]+'/about.json', headers={'User-Agent': 'Mozilla/5.0'})
             opener = urllib2.build_opener()
             f = opener.open(req)
             jason = json.loads(f.read())
