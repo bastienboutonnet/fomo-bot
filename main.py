@@ -84,19 +84,19 @@ def main(restrict_markets, limit):
                                 logging.info(str(match))
                                 social_url = match
 
-                        logging.info('Loading reddit subscription data')
-                        req = urllib2.Request(social_url[0]+'/about.json')
-                        opener = urllib2.build_opener()
-                        f = opener.open(req)
-                        jason = json.loads(f.read())
-                        if jason['data']['subscribers']:
-                            logging.info('subscribers found')
-                            small_df = pandas.DataFrame({'asset': coin,
-                                                         'report_ts': pandas.to_datetime('today'),
-                                                         'subscriptions':  [jason['data']['subscribers']]})
-                            subscriptions_data = subscriptions_data.append(small_df)
-                        else:
-                            logging.info('no subscription data found')
+        logging.info('Loading reddit subscription data')
+        req = urllib2.Request(social_url[0]+'/about.json')
+        opener = urllib2.build_opener()
+        f = opener.open(req)
+        jason = json.loads(f.read())
+        if jason['data']['subscribers']:
+            logging.info('subscribers found')
+            small_df = pandas.DataFrame({'asset': coin,
+                                         'report_ts': pandas.to_datetime('today'),
+                                         'subscriptions':  [jason['data']['subscribers']]})
+            subscriptions_data = subscriptions_data.append(small_df)
+        else:
+            logging.info('no subscription data found')
     # save stuff
     logging.info('saving to db')
     load_and_append_data(subscriptions_data, 'data_packet')
