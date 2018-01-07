@@ -77,7 +77,7 @@ def main(restrict_markets, limit):
                         soup = BeautifulSoup(resp, from_encoding=resp.info().getparam('charset'))
                         scripts = soup.find_all("script")
                         for i in range(len(scripts)):
-                            cur_script = str(scripts[22].string)
+                            cur_script = str(scripts[i].string)
                             match = re.findall('https:\/\/www.reddit.com\/r\/\w+', cur_script)
                             if match:
                                 logging.info('link found')
