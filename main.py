@@ -31,7 +31,8 @@ def load_and_append_data(new_data, filename, output=False):
 @click.command()
 @click.option('--restrict_markets/--no-restrict_markets', default=False)
 @click.argument('limit', type=int)
-def main(restrict_markets, limit):
+@click.argument('db_file', type=str)
+def main(restrict_markets, limit, db_file):
     logging.info('Getting assets list')
     url = 'https://coinmarketcap.com/all/views/all/'
 
@@ -120,7 +121,7 @@ def main(restrict_markets, limit):
             logging.info('not on allowed exchange or so')
     # save stuff
     logging.info('saving to db')
-    load_and_append_data(subscriptions_data, 'data_packet')
+    load_and_append_data(subscriptions_data, db_file)
 
 if __name__ == '__main__':
     main()
