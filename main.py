@@ -97,7 +97,6 @@ def main(restrict_markets, limit, db_file):
                                     social_url = match
                                     counter += 1
         if len(social_url) > 0:
-            # TODO: Progress? x / x-max coins
             logging.info('Loading reddit subscription data')
             req = urllib2.Request(social_url[0]+'/about.json', headers={'User-Agent': 'Mozilla/5.0'})
             opener = urllib2.build_opener()
