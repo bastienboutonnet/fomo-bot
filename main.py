@@ -58,12 +58,17 @@ def main(restrict_markets, limit):
     logging.info('Iterating Over Coins')
     if limit > 0:
         coins = coins[0:limit]
+    n_coins = len(coins)
+    coins_counter = 0
     for coin in coins:
-        wait = random.randint(4, 10)
-        logging.info('Waiting for: {}s'.format(wait))
-        time.sleep(random.randint(4, 10))
+        social_url = []
+        coins_counter += 1
+        #wait = random.randint(4, 10)
+        #logging.info('Waiting for: {}s'.format(wait))
+        #time.sleep(random.randint(4, 10))
         base_url = 'https://coinmarketcap.com/currencies/'+coin
         logging.info('Getting markets for: {}'.format(coin.upper()))
+        logging.info('Progress {0}/{1} coins'.format(coins_counter, n_coins))
         # base_url = 'https://coinmarketcap.com/currencies/nxt/#markets'
         resp = urllib2.urlopen(base_url+'#markets')
         soup = BeautifulSoup(resp, from_encoding=resp.info().getparam('charset'))
@@ -90,21 +95,29 @@ def main(restrict_markets, limit):
                                     logging.info(str(match))
                                     social_url = match
                                     counter += 1
-        if social_url:
-            # TODO: add a retry wrapper around this request to create soft fail.
+        if len(social_url) > 0:
+            # TODO: Progress? x / x-max coins
             logging.info('Loading reddit subscription data')
             req = urllib2.Request(social_url[0]+'/about.json', headers={'User-Agent': 'Mozilla/5.0'})
             opener = urllib2.build_opener()
-            f = opener.open(req)
-            jason = json.loads(f.read())
-            if jason['data']['subscribers']:
-                logging.info('subscribers found')
-                small_df = pandas.DataFrame({'asset': coin,
-                                             'report_ts': pandas.to_datetime('today'),
-                                             'subscriptions':  [jason['data']['subscribers']]})
-                subscriptions_data = subscriptions_data.append(small_df)
-            else:
-                logging.info('no subscription data found')
+            try:
+                f = opener.open(req)
+                jason = json.loads(f.read())
+                if jason:
+                    if 'data' in jason:
+                        if 'subscribers' in jason['data']:
+                            logging.info('subscribers found')
+                            small_df = pandas.DataFrame({'asset': coin,
+                                                         'report_ts': pandas.to_datetime('today'),
+                                                         'subscriptions': [jason['data']['subscribers']]})
+                            subscriptions_data = subscriptions_data.append(small_df)
+                        else:
+                            logging.info('no subscription data found')
+            except urllib2.HTTPError:
+                logging.info('something FUCKED up with {}'.format(social_url))
+                pass
+        else:
+            logging.info('not on allowed exchange or so')
     # save stuff
     logging.info('saving to db')
     load_and_append_data(subscriptions_data, 'data_packet')

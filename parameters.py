@@ -1,1 +1,1 @@
-ALLOWED_EXCHANGES = ['bitstamp']
+ALLOWED_EXCHANGES = ['bitstamp', 'bittrex', 'bitfinex', 'poloniex']
