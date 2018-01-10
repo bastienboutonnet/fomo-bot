@@ -108,7 +108,7 @@ def main(restrict_markets, limit, db_file):
                         if 'subscribers' in jason['data']:
                             logging.info('subscribers found')
                             small_df = pandas.DataFrame({'asset': coin,
-                                                         'report_ts': pandas.to_datetime('today'),
+                                                         'report_ts': pandas.to_datetime('now'),
                                                          'subscriptions': [jason['data']['subscribers']]})
                             subscriptions_data = subscriptions_data.append(small_df)
                         else:
