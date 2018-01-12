@@ -1,4 +1,3 @@
-import random
 import urllib
 import re
 import json
@@ -7,7 +6,6 @@ import pandas
 import logging
 import os
 import click
-import time
 
 from bs4 import BeautifulSoup
 from parameters import ALLOWED_EXCHANGES
@@ -64,9 +62,6 @@ def main(restrict_markets, limit, db_file):
     for coin in coins:
         social_url = []
         coins_counter += 1
-        #wait = random.randint(4, 10)
-        #logging.info('Waiting for: {}s'.format(wait))
-        #time.sleep(random.randint(4, 10))
         base_url = 'https://coinmarketcap.com/currencies/'+coin
         logging.info('Getting markets for: {}'.format(coin.upper()))
         logging.info('Progress {0}/{1} coins'.format(coins_counter, n_coins))
@@ -107,6 +102,7 @@ def main(restrict_markets, limit, db_file):
                     if 'data' in jason:
                         if 'subscribers' in jason['data']:
                             logging.info('subscribers found')
+                            # TODO: Create entry for "supported vs non supported exchange? keep a list of exchanges?
                             small_df = pandas.DataFrame({'asset': coin,
                                                          'report_ts': pandas.to_datetime('now'),
                                                          'subscriptions': [jason['data']['subscribers']]})
