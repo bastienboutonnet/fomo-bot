@@ -70,27 +70,32 @@ def main(restrict_markets, limit, db_file):
         soup = BeautifulSoup(resp, from_encoding=resp.info().getparam('charset'))
 
         counter = 0
+        exchange_list = []
         for link in soup.find_all('a', href=True):
-            if counter == 0:
-                if '/exchanges/' in link['href']:
-                    if restrict_markets:
-                        if link['href'].split('/')[2] not in ALLOWED_EXCHANGES:
-                            pass
-                        else:
-                            logging.info('Looking for Reddit link for: {}'.format(coin.upper()))
-                            #cur_url = 'https://coinmarketcap.com/'+'currencies/'+coin+'#social'
-                            # base_url = 'https://coinmarketcap.com/currencies/nxt/#social'
-                            resp = urllib2.urlopen(base_url+'#social')
-                            soup = BeautifulSoup(resp, from_encoding=resp.info().getparam('charset'))
-                            scripts = soup.find_all("script")
-                            for i in range(len(scripts)):
-                                cur_script = str(scripts[i].string)
-                                match = re.findall('https:\/\/www.reddit.com\/r\/\w+', cur_script)
-                                if match:
-                                    logging.info('link found')
-                                    logging.info(str(match))
-                                    social_url = match
-                                    counter += 1
+            # if counter == 0: # TODO move this to write restriction as I still wanna create a list of exchanges.
+            if '/exchanges/' in link['href']:
+                logging.info('{0} available on {1}'.format(coin.upper(), link['href'].split('/')[2])) # FIXME: potentially will make logging too busy.
+                exchange_list.append(link['href'].split('/')[2])
+                # if restrict_markets: # TODO Move this logic in the analyser part.
+                    # if link['href'].split('/')[2] not in ALLOWED_EXCHANGES:
+                        # pass
+                    # else:
+                if exchange_list:
+                    if counter == 0:
+                        logging.info('Looking for Reddit link for: {}'.format(coin.upper()))
+                        # cur_url = 'https://coinmarketcap.com/'+'currencies/'+coin+'#social'
+                        # base_url = 'https://coinmarketcap.com/currencies/nxt/#social'
+                        resp = urllib2.urlopen(base_url+'#social')
+                        soup = BeautifulSoup(resp, from_encoding=resp.info().getparam('charset'))
+                        scripts = soup.find_all("script")
+                        for i in range(len(scripts)):
+                            cur_script = str(scripts[i].string)
+                            match = re.findall('https:\/\/www.reddit.com\/r\/\w+', cur_script)
+                            if match:
+                                logging.info('link found')
+                                logging.info(str(match))
+                                social_url = match
+                                counter += 1
         if len(social_url) > 0:
             logging.info('Loading reddit subscription data')
             req = urllib2.Request(social_url[0]+'/about.json', headers={'User-Agent': 'Mozilla/5.0'})
@@ -105,7 +110,8 @@ def main(restrict_markets, limit, db_file):
                             # TODO: Create entry for "supported vs non supported exchange? keep a list of exchanges?
                             small_df = pandas.DataFrame({'asset': coin,
                                                          'report_ts': pandas.to_datetime('now'),
-                                                         'subscriptions': [jason['data']['subscribers']]})
+                                                         'subscriptions': [jason['data']['subscribers']],
+                                                         'exchanges': [set(exchange_list)]})
                             subscriptions_data = subscriptions_data.append(small_df)
                         else:
                             logging.info('no subscription data found')
